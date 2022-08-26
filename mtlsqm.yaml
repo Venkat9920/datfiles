@@ -2,9 +2,9 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: mtlsmqsc
-  namespace: <PROJECT>
+  namespace: tools
 data:
-  example.mqsc: |-
+  example.mqsc: |
     DEFINE QLOCAL('IN')
     DEFINE QLOCAL('OUT')
     DEFINE CHANNEL(ACE_SVRCONN) CHLTYPE(SVRCONN) TRPTYPE(TCP) SSLCAUTH(REQUIRED) SSLCIPH('ANY_TLS12_OR_HIGHER')
@@ -14,7 +14,7 @@ data:
     SET AUTHREC PRINCIPAL('app1') OBJTYPE(QMGR) AUTHADD(CONNECT,INQ)
     SET AUTHREC PROFILE('IN') PRINCIPAL('app1') OBJTYPE(QUEUE) AUTHADD(BROWSE,GET,INQ,PUT,PASSALL)
     SET AUTHREC PROFILE('OUT') PRINCIPAL('app1') OBJTYPE(QUEUE) AUTHADD(BROWSE,GET,INQ,PUT,PASSALL)
-  example.ini: |-
+  example.ini: |
     Service:
       Name=AuthorizationService
       EntryPoints=14
@@ -24,13 +24,13 @@ apiVersion: mq.ibm.com/v1beta1
 kind: QueueManager
 metadata:
   name: mtlsqm
-  namespace: <PROJECT>
+  namespace: tools
 spec:
-  version: 9.2.2.0-r1
+  version: 9.2.4.0-r1
   license:
     accept: true
-    license: L-RJON-BXUPZ2
-    use: "Production"
+    license: L-RJON-C7QG3S
+    use: NonProduction
   pki:
     keys:
     - name: default
@@ -48,6 +48,11 @@ spec:
   web:
     enabled: true
   queueManager:
+    availability:
+      type: SingleInstance
+    storage:
+      queueManager:
+        type: ephemeral
     ini:
       - configMap:
           name: mtlsmqsc
